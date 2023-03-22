@@ -24,9 +24,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class BlogSearchServiceImpl_naver_001 implements BlogSearchService {
 
-    @Value("${naver.uri}")
-    private String uri;
-
     @Value("${naver.clientId}")
     private String clientId;
 
@@ -51,7 +48,7 @@ public class BlogSearchServiceImpl_naver_001 implements BlogSearchService {
         else naverSort = "date";
 
         Mono<NaverResponse> naverResponseMono =  webClient.get().uri(uriBuilder1 ->
-                        uriBuilder1.path(this.uri)
+                        uriBuilder1.path("/v1/search/blog.json")
                                 .queryParam("query", query)
                                 .queryParam("sort", naverSort)
                                 .queryParam("start", page)
