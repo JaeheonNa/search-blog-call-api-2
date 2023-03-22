@@ -9,4 +9,7 @@ server:
   tomcat:
     threads:
       min-spare: 30
-
+naver:
+  uri: /v1/search/blog.json
+  clientId: A6Kk8FWlTT51IPPsutdZ
+  clientSecret: U6ez5hu5fu

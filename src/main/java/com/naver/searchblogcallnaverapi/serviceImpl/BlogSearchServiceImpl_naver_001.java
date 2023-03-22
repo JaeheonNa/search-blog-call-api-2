@@ -7,10 +7,10 @@ import com.naver.searchblogcallnaverapi.service.BlogSearchService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -24,12 +24,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class BlogSearchServiceImpl_naver_001 implements BlogSearchService {
 
-    private String reqUri = "https://openapi.naver.com/v1/search/blog.json";
+    @Value("${naver.uri}")
+    private String uri;
 
-    private String clientId = "A6Kk8FWlTT51IPPsutdZ";
+    @Value("${naver.clientId}")
+    private String clientId;
 
-    private String clientSecret = "U6ez5hu5fu";
-    private final RestTemplate restTemplate = new RestTemplate();
+    @Value("${naver.clientSecret}")
+    private String clientSecret;
     private WebClient webClient;
 
     @PostConstruct
@@ -44,13 +46,12 @@ public class BlogSearchServiceImpl_naver_001 implements BlogSearchService {
 
     @Override
     public Map getBlogsFromApi(String query, String sort, int page, int size){
-
         String naverSort;
         if("accuracy".equals(sort)) naverSort = "sim";
         else naverSort = "date";
 
         Mono<NaverResponse> naverResponseMono =  webClient.get().uri(uriBuilder1 ->
-                        uriBuilder1.path("/v1/search/blog.json")
+                        uriBuilder1.path(this.uri)
                                 .queryParam("query", query)
                                 .queryParam("sort", naverSort)
                                 .queryParam("start", page)
