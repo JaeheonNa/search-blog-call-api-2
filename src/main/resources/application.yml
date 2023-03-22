@@ -1,0 +1,12 @@
+server:
+  port: 8082
+  servlet:
+    session:
+      timeout: 120m
+    encoding:
+      charset: UTF-8
+      force: true
+  tomcat:
+    threads:
+      min-spare: 30
+
