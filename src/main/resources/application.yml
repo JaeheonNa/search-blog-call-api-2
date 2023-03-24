@@ -10,6 +10,7 @@ server:
     threads:
       min-spare: 30
 naver:
+  baseUri: https://openapi.naver.com
   uri: /v1/search/blog.json
   clientId: A6Kk8FWlTT51IPPsutdZ
   clientSecret: U6ez5hu5fu
