@@ -1,9 +1,6 @@
 package com.naver.searchblogcallnaverapi.serviceImpl;
 
-import com.naver.searchblogcallnaverapi.dto.Documents;
-import com.naver.searchblogcallnaverapi.dto.Item;
-import com.naver.searchblogcallnaverapi.dto.Meta;
-import com.naver.searchblogcallnaverapi.dto.NaverResponse;
+import com.naver.searchblogcallnaverapi.dto.*;
 import com.naver.searchblogcallnaverapi.service.BlogSearchService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +33,7 @@ public class BlogSearchServiceImpl_naver_001 implements BlogSearchService {
 
 
     @Override
-    public Map getBlogsFromApi(String query, String sort, int page, int size){
+    public KakaoResponse getBlogsFromApi(String query, String sort, int page, int size){
         log.info("Naver 요청 들어옴.");
         String naverSort;
         if("accuracy".equals(sort)) naverSort = "sim";
@@ -54,26 +51,25 @@ public class BlogSearchServiceImpl_naver_001 implements BlogSearchService {
                     headers.add("X-Naver-Client-Secret", this.clientSecret);
                 }).accept(MediaType.APPLICATION_JSON).retrieve()
                 .bodyToMono(NaverResponse.class);
-
-
-
-        Map kakaoResponseMono= makeKakaoResponseFormat(naverResponseMono);
-        return kakaoResponseMono;
+        return makeKakaoResponseFormat(naverResponseMono);
     }
 
-    private Map makeKakaoResponseFormat(Mono<NaverResponse> response) {
-        Map responseMap = new HashMap();
+    private KakaoResponse makeKakaoResponseFormat(Mono<NaverResponse> response) {
         NaverResponse naverResponse = response.share().block();
 
-        List<Documents> documents = naverResponse.getItems().stream().map(x -> NaverResponse.convert2KakaoResponse(x)).collect(Collectors.toList());
-        responseMap.put("documents", documents);
+        List<Documents> documents = naverResponse.getItems().stream().map(NaverResponse::convert2KakaoResponse).collect(Collectors.toList());
 
-        Map<String, Object> meta = new HashMap<>();
-        meta.put("total_count", naverResponse.getTotal());
-        meta.put("is_end", naverResponse.getStart()*naverResponse.getDisplay() >= naverResponse.getTotal());
-        meta.put("pageable_count", null);
-        responseMap.put("meta", meta);
-        return responseMap;
+        Meta meta = Meta.builder()
+                .total_count(naverResponse.getTotal())
+                .is_end(naverResponse.getStart()*naverResponse.getDisplay() >= naverResponse.getTotal())
+                .build();
+
+        KakaoResponse kakaoResponse = KakaoResponse.builder()
+                .documents(documents)
+                .meta(meta)
+                .build();
+
+        return kakaoResponse;
     }
 
 }

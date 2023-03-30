@@ -1,5 +1,7 @@
 package com.naver.searchblogcallnaverapi.controller;
 
+import com.naver.searchblogcallnaverapi.dto.KakaoResponse;
+import com.naver.searchblogcallnaverapi.dto.NaverResponse;
 import com.naver.searchblogcallnaverapi.service.BlogSearchService;
 import com.naver.searchblogcallnaverapi.serviceFactory.BlogSearchServiceFactory;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,7 @@ public class BlogSearchController {
     private final BlogSearchServiceFactory blogSearchServiceFactory;
 
     @GetMapping()
-    public Map getBlogByKeywordFromKakao(@RequestParam(name = "query") String query
+    public KakaoResponse getBlogByKeywordFromKakao(@RequestParam(name = "query") String query
                                  , @RequestParam(name = "sort", required = false, defaultValue = "accuracy") String sort
                                  , @RequestParam(name = "page", required = false, defaultValue = "1") int page
                                  , @RequestParam(name = "size", required = false, defaultValue = "10") int size
@@ -26,7 +28,7 @@ public class BlogSearchController {
         /* 특정 API를 호출하는 Service 객체를 가져온다. */
         BlogSearchService blogSearchService = blogSearchServiceFactory.getBlogSearchService(apiType);
         /* Service 객체를 통해 API를 조회한다. */
-        Map blogSearchResult = blogSearchService.getBlogsFromApi(query, sort, page, size);
+        KakaoResponse blogSearchResult = blogSearchService.getBlogsFromApi(query, sort, page, size);
         /* 랭킹을 관리하는 Service 객체를 가져온다. */
         return blogSearchResult;
     }
